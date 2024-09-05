@@ -1,10 +1,11 @@
 import { LightningElement, track, wire } from "lwc";
 import awssdk from "@salesforce/resourceUrl/AWSSDK";
 import { loadScript } from "lightning/platformResourceLoader";
-
+//getting S3Creds from MDT
 import getS3Creds from "@salesforce/apex/AWSCredentialSelector.getS3Creds";
-
+//should be fetching files from custom object with AWS file data
 import fetchContentVersions from "@salesforce/apex/AWSFileController.fetchContentVersions";
+//mock data
 import SIZE from "@salesforce/schema/ContentVersion.ContentSize";
 import MODIFIED_DATE from "@salesforce/schema/ContentVersion.ContentModifiedDate";
 import PATH from "@salesforce/schema/ContentVersion.PathOnClient";
@@ -12,7 +13,8 @@ import PATH from "@salesforce/schema/ContentVersion.PathOnClient";
 import { NavigationMixin } from "lightning/navigation";
 
 const BUTTON_LABEL = "Preview";
-const BUCKET = "unity-oena";
+//bucket hardcoded
+const BUCKET = "*****";
 
 export default class AWSMockup extends NavigationMixin(LightningElement) {
   columns = [
@@ -89,7 +91,7 @@ export default class AWSMockup extends NavigationMixin(LightningElement) {
     getS3Creds().then((result) => {
       this.keyId = result.AWSS3AccessKeyId__c;
       this.keySecret = result.AWSS3AccessKeySecret__c;
-
+//region is hardcoded
       AWS.config.update({
         apiVersion: "2006-03-01",
         accessKeyId: this.keyId,
@@ -130,7 +132,7 @@ export default class AWSMockup extends NavigationMixin(LightningElement) {
             console.error(error);
           });
       }
-
+//should transform xml to json here or another option is to retrieve from file data custom object
       processFileList().then((res) => {
         var parser = new DOMParser();
         var xml = parser.parseFromString(res, "application/xml");
@@ -150,6 +152,7 @@ export default class AWSMockup extends NavigationMixin(LightningElement) {
     }
   }
 
+  //uploading file to bucket with presigned URL to avoid SF file size limits
   async uploadToAWS(fileName, fileBody) {
     console.log("uploadToAWS...");
 
@@ -209,25 +212,26 @@ export default class AWSMockup extends NavigationMixin(LightningElement) {
       });
     });
   }
-
+  
+//used for rendering files with presigned URL
   async showDocumentLink() {
     const AWS = window.AWS;
 
     getS3Creds().then((result) => {
       this.keyId = result.AWSS3AccessKeyId__c;
       this.keySecret = result.AWSS3AccessKeySecret__c;
-
+//hardcoded bucket
       AWS.config.update({
         accessKeyId: this.keyId,
         secretAccessKey: this.keySecret,
         region: "eu-central-1",
-        bucket: "unity-oena"
+        bucket: "*****"
       });
 
       var s3 = new AWS.S3();
-
+//hardcoded file for development purposes, should be generated on a case-by-case basis, depending on which file we render
       var strImageUrl =
-        "https://unity-oena.s3.eu-central-1.amazonaws.com/Partnerspiel_Stammbaum_1";
+        "*******";
       if (strImageUrl != null && strImageUrl != "") {
         var keyindex = strImageUrl.lastIndexOf("/");
         var strKey = strImageUrl.substring(keyindex + 1);

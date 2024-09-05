@@ -1,0 +1,58 @@
+<template>
+    <lightning-layout>
+        <lightning-layout-item
+            class="slds-box slds-theme_shade slds-size_1-of-1"
+            style="border: 1px solid rgb(158, 159, 160)"
+        >
+            <article class="slds-card slds-theme_shade">
+                <div class="slds-card__header slds-grid">
+                    <header
+                        class="
+                            slds-media slds-media_center
+                            slds-has-flexi-truncate
+                        "
+                    >
+                        <div class="slds-media__figure">
+                            <span>
+                                <lightning-icon
+                                    icon-name="standard:contract"
+                                    alternative-text="AWS Files"
+                                    title="awsfiles"
+                                ></lightning-icon>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                <span>AWS Stored Files</span>
+                            </h2>
+                        </div>
+                        <div class="slds-no-flex">
+                            <lightning-input
+                                label=""
+                                name="file to upload"
+                                onchange={handleSelectedFiles}
+                                type="file"
+                                multiple
+                            ></lightning-input>
+                        </div>
+                    </header>
+                </div>
+
+                <div class="slds-card__body">
+                    <lightning-datatable
+                        key-field="Id"
+                        columns={columns}
+                        data={wiredMockData}
+                        show-row-number-column
+                        hide-checkbox-column="true"
+                        resize-column-disabled="true"
+                        suppress-bottom-bar="true"
+                        onrowaction={renderFile}
+                    >
+                    </lightning-datatable>
+                </div>
+                <footer class="slds-card__footer"></footer>
+            </article>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>
